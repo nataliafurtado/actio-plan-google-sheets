@@ -4,7 +4,7 @@ import 'package:google_action_plan/config/style.dart';
 import 'package:intl/intl.dart';
 
 import '../assets/constants.dart';
-import '../services/navigator_sergice.dart';
+import '../services/navigator_service.dart';
 
 Color statusColors(String status) {
   if (Constants.emProgresso == status.toUpperCase()) {

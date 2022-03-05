@@ -1,8 +1,16 @@
+import 'package:flutter/cupertino.dart';
+import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginController {
+  final ListRepository listRepository;
+  LoginController({required this.listRepository});
+
   GoogleSignInAccount? googleSignInAccount;
   String? token;
+
+  TextEditingController loginController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     // Optional clientId
@@ -13,7 +21,7 @@ class LoginController {
       // 'https://www.googleapis.com/auth/drive.readonly',
       // 'https://www.googleapis.com/auth/drive.file',
       // 'https://www.googleapis.com/auth/drive',
-      // 'https://www.googleapis.com/auth/spreadsheets',
+      'https://www.googleapis.com/auth/spreadsheets',
       //.currentonly
       // 'https://www.googleapis.com/auth/spreadsheets.readonly',
       //
@@ -21,22 +29,25 @@ class LoginController {
       // 'https://www.googleapis.com/auth/script.processes',
       'https://www.googleapis.com/auth/script.deployments',
     ],
-    // clientId:
-    //     '280281413857-b85n70e100d4at6f0m8nngt76ok4mc6q.apps.googleusercontent.com',
+    clientId:
+        '280281413857-70ucdtinbmnjp937d91sn0lqrj9s5td6.apps.googleusercontent.com',
   );
 
-  Future<void> makeLogin() async {
+  Future<void> makeLogin(context) async {
     try {
       googleSignInAccount = await _googleSignIn.signIn();
 
       final ggAuth = await googleSignInAccount!.authentication;
       // ignore: avoid_print
-      print(ggAuth.idToken);
+      // print(ggAuth.idToken);
       // ignore: avoid_print
-      print(ggAuth.accessToken);
+      // print(ggAuth.accessToken);
       token = ggAuth.accessToken!;
       // ignore: avoid_print
       print(googleSignInAccount!.email);
+      await listRepository.makeInitialConfig();
+
+      Navigator.pushNamed(context, '/launch-to-gcp');
     } catch (error) {
       // ignore: avoid_print
       print(error);

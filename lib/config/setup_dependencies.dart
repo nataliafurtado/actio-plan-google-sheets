@@ -5,19 +5,16 @@ import 'package:google_action_plan/modules/landing_page/landing_page_controller.
 import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
 import 'package:google_action_plan/modules/login/login_controller.dart';
 import 'package:dio/dio.dart';
+import 'package:google_action_plan/modules/login/teddy/teddy_controller.dart';
+import 'package:google_action_plan/services/cache/cache.dart';
+import 'package:google_action_plan/services/cache/project_cache.dart';
 
 Future<void> setupDependencies() async {
-  _setupInterceptor();
   _setupInitialConfig();
-  _setupControllers();
+  _setupInterceptor();
   _setupRepositories();
+  _setupControllers();
   _setupDio();
-}
-
-void _setupInterceptor() {
-  GetIt.I.registerLazySingleton<DioInterceptor>(
-    () => DioInterceptor(),
-  );
 }
 
 Future<void> _setupInitialConfig() async {
@@ -25,8 +22,34 @@ Future<void> _setupInitialConfig() async {
     () => DI(),
   );
 
-  GetIt.I.registerLazySingleton<IdSheetSingleton>(
+  DI.registerLazySingleton<IdSheetSingleton>(
     () => IdSheetSingleton(),
+  );
+
+  DI.registerLazySingleton<Cache>(
+    () => Cache(),
+  );
+
+  DI.registerLazySingleton<ProjectCache>(
+    () => ProjectCache(
+      GetIt.I.get<Cache>(),
+    ),
+  );
+}
+
+void _setupInterceptor() {
+  DI.registerLazySingleton<DioInterceptor>(
+    () => DioInterceptor(),
+  );
+}
+
+void _setupRepositories() {
+  DI.registerLazySingleton<ListRepository>(
+    () => ListRepository(
+      loginController: GetIt.I.get<LoginController>(),
+      dio: DioInstances.dioClient()!,
+      projectCache: 
+    ),
   );
 }
 
@@ -36,16 +59,13 @@ Future<void> _setupControllers() async {
   );
 
   DI.registerLazySingleton<LoginController>(
-    () => LoginController(),
-  );
-}
-
-void _setupRepositories() {
-  DI.registerLazySingleton<ListRepository>(
-    () => ListRepository(
-      loginController: GetIt.I.get<LoginController>(),
-      dio: DioInstances.dioClient()!,
+    () => LoginController(
+      listRepository: GetIt.I.get<ListRepository>(),
     ),
+  );
+
+  DI.registerLazySingleton<TeddyController>(
+    () => TeddyController(),
   );
 }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
-import 'package:google_action_plan/modules/landing_page/widgets/init.dart';
+import 'package:google_action_plan/modules/login/login_page.dart';
 
 import 'landing_page_controller.dart';
 import 'widgets/configurations.dart';
@@ -31,7 +31,7 @@ class _LandingPageState extends State<LandingPage> {
 
   Widget showPage(LandingPageController controllerGlobalAcess) {
     if (controllerGlobalAcess.selectPageIndex == 0) {
-      return const InitPage();
+      return const LoginPage();
     } else if (controllerGlobalAcess.selectPageIndex == 1) {
       return const Configurations2();
     }
