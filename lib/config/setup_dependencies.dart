@@ -46,9 +46,8 @@ void _setupInterceptor() {
 void _setupRepositories() {
   DI.registerLazySingleton<ListRepository>(
     () => ListRepository(
-      loginController: GetIt.I.get<LoginController>(),
       dio: DioInstances.dioClient()!,
-      projectCache: 
+      projectCache: GetIt.I.get<ProjectCache>(),
     ),
   );
 }

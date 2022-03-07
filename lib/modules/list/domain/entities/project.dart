@@ -8,6 +8,7 @@ part 'project.g.dart';
 @JsonSerializable(includeIfNull: false)
 class Project {
   String? scriptId;
+  String? deploimentId;
 
   String? title;
   String? updateTime;
@@ -20,6 +21,7 @@ class Project {
     this.files,
     this.creator,
     this.lastModifyUser,
+    this.deploimentId,
   });
 
   factory Project.fromJson(Map<String, dynamic> json) =>

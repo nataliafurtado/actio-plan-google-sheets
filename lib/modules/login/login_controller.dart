@@ -9,9 +9,6 @@ class LoginController {
   GoogleSignInAccount? googleSignInAccount;
   String? token;
 
-  TextEditingController loginController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     // Optional clientId
     // clientId: '479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com',
@@ -45,7 +42,7 @@ class LoginController {
       token = ggAuth.accessToken!;
       // ignore: avoid_print
       print(googleSignInAccount!.email);
-      await listRepository.makeInitialConfig();
+      // await listRepository.makeInitialConfig();
 
       Navigator.pushNamed(context, '/launch-to-gcp');
     } catch (error) {

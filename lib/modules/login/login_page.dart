@@ -32,7 +32,9 @@ class LoginPage extends StatelessWidget {
           ),
           Container(height: 50),
           GoogleSignInButton(
-            signIn: GetIt.I.get<LoginController>().makeLogin,
+            signIn: () {
+              GetIt.I.get<LoginController>().makeLogin(context);
+            },
           ),
           Expanded(child: Container(height: 35)),
           const LoginDevelopedBy(),

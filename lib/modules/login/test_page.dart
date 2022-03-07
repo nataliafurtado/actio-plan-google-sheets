@@ -45,10 +45,6 @@ class _TestPageState extends State<TestPage> {
               text: 'createProject',
             ),
             TT(
-              function: listRepository.getProjectContent,
-              text: 'getProjectContent',
-            ),
-            TT(
               function: listRepository.updateProject,
               text: 'updateProject',
             ),
@@ -57,28 +53,12 @@ class _TestPageState extends State<TestPage> {
               text: 'createVersion',
             ),
             TT(
-              function: listRepository.listVersion,
-              text: 'listVersion',
-            ),
-            TT(
               function: listRepository.createDeplyment,
               text: 'createDeplyment',
             ),
             TT(
-              function: listRepository.getDeploy,
-              text: 'getDeploy',
-            ),
-            TT(
               function: listRepository.runScript,
               text: 'runScript',
-            ),
-            TT(
-              function: listRepository.doPost,
-              text: 'doPost',
-            ),
-            TT(
-              function: listRepository.doGet,
-              text: 'doGet',
             ),
             TT(
               function: () async {
@@ -97,12 +77,6 @@ class _TestPageState extends State<TestPage> {
                 await listRepository.createDeplyment();
               },
               text: 'tudo',
-            ),
-            TT(
-              function: () async {
-                await listRepository.doPost();
-              },
-              text: 'post',
             ),
           ],
         ),

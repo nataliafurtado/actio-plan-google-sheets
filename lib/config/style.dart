@@ -16,17 +16,19 @@ class Style {
         ],
       );
 
-  static BoxDecoration get buttonDecoration => BoxDecoration(
-        color: Style.primaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade400,
-            offset: const Offset(0.0, 1.0),
-            blurRadius: 1.0,
-          ),
-        ],
-      );
+  static BoxDecoration buttonDecoration({Color? color}) {
+    return BoxDecoration(
+      color: color ?? primaryColor,
+      borderRadius: const BorderRadius.all(Radius.circular(20)),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.shade400,
+          offset: const Offset(0.0, 1.0),
+          blurRadius: 1.0,
+        ),
+      ],
+    );
+  }
 
   static Color get iceBackground => const Color(0XFFF7F8FC);
 
@@ -78,8 +80,7 @@ class Style {
         color: Colors.white,
       );
 
-  static TextStyle get titleFont => GoogleFonts.roboto
-  (
+  static TextStyle get titleFont => GoogleFonts.roboto(
         fontSize: 20,
         letterSpacing: 0.7,
       );
@@ -95,6 +96,11 @@ class Style {
 
   static TextStyle get cardText => TextStyle(
         color: Style.detailDarkestColor,
+      );
+
+  static TextStyle get text => TextStyle(
+        color: Style.detailDarkestColor,
+        fontSize: 15,
       );
 
   static TextStyle get formSubTitle => TextStyle(
