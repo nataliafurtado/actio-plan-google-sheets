@@ -1,8 +1,10 @@
 import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/config/di.dart';
 import 'package:google_action_plan/id_sheet_singleton.dart';
+import 'package:google_action_plan/modules/action/action_controller.dart';
 import 'package:google_action_plan/modules/landing_page/landing_page_controller.dart';
 import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
+import 'package:google_action_plan/modules/list/list_controller.dart';
 import 'package:google_action_plan/modules/login/login_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:google_action_plan/modules/login/teddy/teddy_controller.dart';
@@ -65,6 +67,19 @@ Future<void> _setupControllers() async {
 
   DI.registerLazySingleton<TeddyController>(
     () => TeddyController(),
+  );
+
+  DI.registerLazySingleton<ListController>(
+    () => ListController(
+      listRepository: GetIt.I.get<ListRepository>(),
+    ),
+  );
+
+  DI.registerLazySingleton<ActionController>(
+    () => ActionController(
+      listRepository: GetIt.I.get<ListRepository>(),
+    ),
+    pathToKeepAlive: '/action-page',
   );
 }
 

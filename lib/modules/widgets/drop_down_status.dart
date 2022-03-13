@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:google_action_plan/functions/functions.dart';
+import 'package:get_it/get_it.dart';
+import 'package:google_action_plan/config/style.dart';
+import 'package:google_action_plan/functions/functions.dart';
+import 'package:google_action_plan/modules/action/action_controller.dart';
 
 class DropDownStatus extends StatefulWidget {
   const DropDownStatus({Key? key}) : super(key: key);
@@ -11,13 +14,12 @@ class DropDownStatus extends StatefulWidget {
 class _DropDownStatusState extends State<DropDownStatus> {
   @override
   Widget build(BuildContext context) {
-    // ListController controllerList =
-    //     Provider.of<ListController>(context, listen: false);
+    final controller = GetIt.I.get<ActionController>();
     return Container(
       height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        // color: statusColors(controllerList.selectedStatus),
+        color: statusColors(controller.selectedStatus),
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         boxShadow: [
           BoxShadow(
@@ -27,26 +29,32 @@ class _DropDownStatusState extends State<DropDownStatus> {
           ),
         ],
       ),
-      // child: DropdownButton<String>(
-      //   items: controllerList.status.map((String val) {
-      //     return new DropdownMenuItem<String>(
-      //       value: val,
-      //       child: Container(
-      //           width: flexWidthSpacing(context, 1) - 100,
-      //           alignment: Alignment.center,
-      //           child: Text(
-      //             val,
-      //             style: Style.bold,
-      //           )),
-      //     );
-      //   }).toList(),
-      //   value: controllerList.selectedStatus,
-      //   underline: Container(color: Colors.transparent),
-      //   onChanged: (newVal) {
-      //     controllerList.selectedStatus = newVal;
-      //     this.setState(() {});
-      //   },
-      // ),
+      child: DropdownButton<String>(
+        items: [
+          'EM PROGRESSO',
+          'EM ESPERA',
+          'ATRASADA',
+          "COMPLETA",
+          "CANCELADA"
+        ].map((String val) {
+          return DropdownMenuItem<String>(
+            value: val,
+            child: Container(
+                width: flexWidthSpacing(context, 1) - 100,
+                alignment: Alignment.center,
+                child: Text(
+                  val,
+                  style: Style.bold,
+                )),
+          );
+        }).toList(),
+        value: controller.selectedStatus,
+        underline: Container(color: Colors.transparent),
+        onChanged: (newVal) {
+          controller.selectedStatus = newVal!;
+          this.setState(() {});
+        },
+      ),
     );
   }
 }

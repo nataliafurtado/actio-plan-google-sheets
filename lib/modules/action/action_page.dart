@@ -1,18 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+
 import 'package:google_action_plan/config/style.dart';
-import 'package:google_action_plan/generated/l10n.dart';
+import 'package:google_action_plan/models/action.dart';
+import 'package:google_action_plan/modules/action/action_controller.dart';
 import 'package:google_action_plan/modules/widgets/button.dart';
 import 'package:google_action_plan/modules/widgets/date_picker_prazo.dart';
+import 'package:google_action_plan/modules/widgets/drop_down_category.dart';
 import 'package:google_action_plan/modules/widgets/drop_down_responsable.dart';
 import 'package:google_action_plan/modules/widgets/drop_down_status.dart';
 
-class ActionEventPage extends StatelessWidget {
-  const ActionEventPage({Key? key}) : super(key: key);
+class ActionPage extends StatefulWidget {
+  final ActionEvent? action;
+  const ActionPage({
+    Key? key,
+    this.action,
+  }) : super(key: key);
+
+  @override
+  State<ActionPage> createState() => _ActionPageState();
+}
+
+class _ActionPageState extends State<ActionPage> {
+  late ActionController controller;
+  @override
+  void initState() {
+    controller = GetIt.I.get<ActionController>();
+    controller.init(widget.action);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // ListController controllerList =
-    //     Provider.of<ListController>(context, listen: false);
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -23,71 +42,65 @@ class ActionEventPage extends StatelessWidget {
               Container(height: 50),
               Container(
                   padding: const EdgeInsets.all(10),
-                  child: Text(S.of(context).CATEGORIA)),
-              TextFormField(
-                // controller: controllerList.controllerCategoria,
-                decoration: Style.inputDecoration(),
-              ),
+                  child: const Text('Categoria')),
+              const DropDownCategory(),
               Container(height: 10),
               Container(
                   padding: const EdgeInsets.all(10),
-                  child: Text(S.of(context).O_QUE)),
+                  child: const Text('O que ')),
               TextFormField(
-                // controller: controllerList.controllerOque,
+                controller: controller.controllerOque,
                 decoration: Style.inputDecoration(),
               ),
               //
               Container(height: 10),
               Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(S.of(context).COMO)),
+                  padding: const EdgeInsets.all(10), child: const Text('Como')),
               TextFormField(
-                // controller: controllerList.controllerComo,
+                controller: controller.controllerComo,
                 decoration: Style.inputDecoration(),
                 maxLines: 5,
               ),
               //
               Container(height: 10),
               Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(S.of(context).QUEM)),
+                  padding: const EdgeInsets.all(10), child: const Text('Quem')),
               const DropDownResponsable(),
               //
               Container(height: 20),
               Container(
                   padding: const EdgeInsets.all(10),
-                  child: Text(S.of(context).PRAZO)),
+                  child: const Text('Prazo')),
               //
               const DatePickerPrazo(),
               //
               Container(height: 10),
               Container(
                   padding: const EdgeInsets.all(10),
-                  child: Text(S.of(context).SATUS)),
+                  child: const Text('Status')),
               const DropDownStatus(),
               //
               Container(height: 10),
               Container(
                   padding: const EdgeInsets.all(10),
-                  child: Text(S.of(context).FEED_BACK)),
+                  child: const Text('Feed Back')),
               TextFormField(
-                // controller: controllerList.controllerFeedBack,
+                controller: controller.controllerFeedBack,
                 decoration: Style.inputDecoration(),
                 maxLines: 3,
               ),
               //
               Container(height: 10),
               Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(S.of(context).OBS)),
+                  padding: const EdgeInsets.all(10), child: const Text('Obs')),
               TextFormField(
-                // controller: controllerList.controllerObs,
+                controller: controller.controllerObs,
                 decoration: Style.inputDecoration(),
                 maxLines: 3,
               ),
               Container(height: 40),
-              Button(S.of(context).SALVAR, () {
-                // controllerList.saveActionEvent();
+              Button('Salvar', () {
+                controller.saveActionEvent();
               }),
               Container(height: 40),
             ],

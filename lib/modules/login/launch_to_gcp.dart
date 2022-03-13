@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/config/style.dart';
+import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
 import 'package:google_action_plan/modules/login/teddy/widgets/title_widget.dart';
 import 'package:google_action_plan/modules/login/widgets/copy_button.dart';
 import 'package:google_action_plan/modules/widgets/button.dart';
@@ -35,6 +36,7 @@ class LauchToGcp extends StatelessWidget {
                   '    Para fazer isso é necessário ir na página de configuração do seu projeto.',
                   style: Style.text,
                 ),
+                const SizedBox(height: 15),
                 const Image(
                   image: AssetImage("lib/assets/images/gcp.png"),
                 ),
@@ -59,10 +61,10 @@ class LauchToGcp extends StatelessWidget {
                 const SizedBox(height: 50),
                 InkWell(
                   onTap: () async {
-                    final depId =
-                        GetIt.I.get<ProjectCache>().getProject().deploimentId;
+                    final id =
+                        GetIt.I.get<ProjectCache>().getProject().scriptId;
                     await launch(
-                      "https://script.google.com/home/projects/$depId/settings",
+                      "https://script.google.com/home/projects/$id/settings",
                     );
                   },
                   child: const Text(
@@ -79,10 +81,11 @@ class LauchToGcp extends StatelessWidget {
                   style: Style.text,
                 ),
                 const SizedBox(height: 25),
-                Button('Ir para a planilha', () {
+                Button('Ir para a planilha', () async {
+                  await GetIt.I.get<ListRepository>().runScripts();
                   Navigator.pushNamed(context, '/list-page');
                 }),
-                const SizedBox(height: 200),
+                const SizedBox(height: 100),
               ],
             )
           ],
@@ -91,4 +94,3 @@ class LauchToGcp extends StatelessWidget {
     );
   }
 }
-//  Text(),

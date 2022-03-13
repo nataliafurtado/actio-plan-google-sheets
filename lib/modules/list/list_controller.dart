@@ -3,27 +3,24 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:google_action_plan/assets/constants.dart';
 import 'package:google_action_plan/functions/functions.dart';
-// import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
+import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/filter_responsable.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/filter_status.dart';
 import 'package:google_action_plan/modules/widgets/dialog_circular_progress_indicator.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:google_action_plan/generated/l10n.dart';
 import 'package:google_action_plan/models/action.dart';
 
 part 'list_controller.g.dart';
 
 class ListController = ListControllerBase with _$ListController;
 
-abstract class ListControllerBase with Store, ChangeNotifier {
-  final BuildContext context;
-  ListControllerBase(
-    this.context,
-  );
-
-  // final ListRepository _listRepository = ListRepository();
+abstract class ListControllerBase with Store {
+  final ListRepository listRepository;
+  ListControllerBase({
+    required this.listRepository,
+  });
 
   @observable
   List<ActionEvent> actions = [];
@@ -42,8 +39,6 @@ abstract class ListControllerBase with Store, ChangeNotifier {
     "CANCELADA"
   ];
 
-  String selectedStatus = 'EM PROGRESSO';
-
   late bool isToSave;
   @observable
   bool isToShowResponsable = false;
@@ -57,20 +52,21 @@ abstract class ListControllerBase with Store, ChangeNotifier {
 
   TextEditingController controllerFeedBack = TextEditingController();
   TextEditingController controllerObs = TextEditingController();
-  String prazo = '';
+
   String data = '';
   late String rowToEdit;
 
   @action
   loadData() async {
-    showCustomDialog(const DialogCircularProgressIndicator());
-    selectedFilterStatus = S.of(context).SATUS.toUpperCase();
-    selectedResponsable = S.of(context).QUEM.toUpperCase();
-    // List<ActionEvent> actionList = await _listRepository.loadActionEvents();
-    //   actionsNotFiltered = actionList;
-    //   separetaResponsableValues(actionList);
-    //   apllySavedFIlters(actionList);
-    //   Navigator.pop(context);
+    // showCustomDialog(const DialogCircularProgressIndicator());
+    selectedFilterStatus = "STATUS";
+    selectedResponsable = "QUEM";
+    List<ActionEvent> actionList = await listRepository.loadRows();
+    actionsNotFiltered = actionList;
+    responsables = listRepository.getResResponsablesList();
+    actions = actionList;
+    // apllySavedFIlters(actionList);
+    // Navigator.pop(context);
   }
 
   @action
@@ -94,20 +90,6 @@ abstract class ListControllerBase with Store, ChangeNotifier {
     }
   }
 
-  @action
-  separetaResponsableValues(List<ActionEvent> list) {
-    List<String> responsablesList = [];
-    for (var i = 0; i < list.length; i++) {
-      responsablesList.add(list[i].quem!);
-    }
-    responsablesList = responsablesList.toSet().toList();
-    if (!responsablesList.contains("")) {
-      responsablesList.add("");
-    }
-    responsables = responsablesList;
-    log(responsables.toString());
-  }
-
   // FILTERS
   @action
   filter() {
@@ -126,12 +108,9 @@ abstract class ListControllerBase with Store, ChangeNotifier {
   }
 
   bool isFilterStatusAndFilterResponsableSelected() =>
-      selectedFilterStatus != S.of(context).SATUS.toUpperCase() &&
-      selectedResponsable != S.of(context).QUEM.toUpperCase();
-  bool isFilterStatusSelected() =>
-      selectedFilterStatus != S.of(context).SATUS.toUpperCase();
-  bool isFilterResponsableSelected() =>
-      selectedResponsable != S.of(context).QUEM.toUpperCase();
+      selectedFilterStatus != "STATUS" && selectedResponsable != "QUEM";
+  bool isFilterStatusSelected() => selectedFilterStatus != "STATUS";
+  bool isFilterResponsableSelected() => selectedResponsable != "QUEM";
 
   @action
   filterStatusActions(String statusPassed) {
@@ -150,14 +129,14 @@ abstract class ListControllerBase with Store, ChangeNotifier {
   @action
   filterStatusCleanFilter() {
     deleteFilter(Constants.filtroStatus);
-    selectedFilterStatus = S.of(context).SATUS.toUpperCase();
+    selectedFilterStatus = "STATUS";
     filter();
   }
 
   @action
   filterResponsableCleanFilter() {
     deleteFilter(Constants.filtroResponsable);
-    selectedResponsable = S.of(context).QUEM.toUpperCase();
+    selectedResponsable = "QUEM";
     filter();
   }
 
@@ -171,86 +150,13 @@ abstract class ListControllerBase with Store, ChangeNotifier {
     prefs.remove(filterType);
   }
 
-  goToEditActionEventPage(int index) async {
-    await loadActionEventControllers(index);
-    isToSave = false;
-    Navigator.pushNamed(context, '/action-event-page', arguments: this);
-  }
-
-  goToNewActionEventPage() async {
-    data = DateTime.now().toIso8601String();
-    selectedStatus = "EM PROGRESSO";
-    isToSave = true;
-    selectedResponsable = "";
-    controllerCategoria.text = "";
-    controllerOque.text = "";
-    controllerComo.text = "";
-    selectedResponsable = "";
-    controllerFeedBack.text = "";
-    controllerObs.text = "";
-    prazo = "";
-    Navigator.pushNamed(context, '/action-event-page', arguments: this);
-  }
-
-  loadActionEventControllers(int index) async {
-    rowToEdit = actions[index].rowToEdit!;
-    controllerCategoria.text = actions[index].categoria!;
-    controllerOque.text = actions[index].oQue!;
-    controllerComo.text = actions[index].como!;
-    selectedResponsable = actions[index].quem!;
-    controllerFeedBack.text = actions[index].feedBack!;
-    controllerObs.text = actions[index].obs!;
-    prazo = actions[index].prazo!;
-    data = actions[index].data!;
-    selectedStatus = actions[index].status!;
-  }
-
-  saveActionEvent() async {
-    showCustomDialog(const DialogCircularProgressIndicator());
-    // await _listRepository.doPost(loadActionEventObject());
-    await Future.delayed(const Duration(seconds: 1));
-    Navigator.popAndPushNamed(context, '/list-page');
-  }
-
-  ActionEvent loadActionEventObject() {
-    if (isToSave) {
-      return ActionEvent(
-        data: formatData(data, false),
-        categoria: controllerCategoria.text,
-        oQue: controllerOque.text,
-        como: controllerComo.text,
-        quem: selectedResponsable,
-        prazo: formatData(prazo, false),
-        status: selectedStatus,
-        feedBack: controllerFeedBack.text,
-        obs: controllerObs.text,
-        rowToEdit: "",
-        action: Constants.save,
-      );
-    } else {
-      return ActionEvent(
-        data: formatData(data, false),
-        categoria: controllerCategoria.text,
-        oQue: controllerOque.text,
-        como: controllerComo.text,
-        quem: selectedResponsable,
-        prazo: formatData(prazo, false),
-        status: selectedStatus,
-        feedBack: controllerFeedBack.text,
-        obs: controllerObs.text,
-        rowToEdit: rowToEdit,
-        action: Constants.edit,
-      );
-    }
-  }
-
   deleteactionEvent(int index) async {
     showCustomDialog(const DialogCircularProgressIndicator());
     // await _listRepository.doPost(ActionEvent(
     //   rowToEdit: actions[index].rowToEdit,
     //   action: Constants.delete,
     // ));
-    Navigator.pop(context);
+    // Navigator.pop(context);
     loadData();
   }
 

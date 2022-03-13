@@ -35,16 +35,20 @@ class LoginController {
       googleSignInAccount = await _googleSignIn.signIn();
 
       final ggAuth = await googleSignInAccount!.authentication;
-      // ignore: avoid_print
-      // print(ggAuth.idToken);
-      // ignore: avoid_print
-      // print(ggAuth.accessToken);
+      // // ignore: avoid_print
+      // // print(ggAuth.idToken);
+      // // ignore: avoid_print
+      // // print(ggAuth.accessToken);
       token = ggAuth.accessToken!;
       // ignore: avoid_print
-      print(googleSignInAccount!.email);
+      print(token);
+      // print(googleSignInAccount!.email);
       // await listRepository.makeInitialConfig();
-
-      Navigator.pushNamed(context, '/launch-to-gcp');
+      // Navigator.pushNamed(context, '/launch-to-gcp');
+      //
+      //
+      await listRepository.seloadCachedParameters();
+      Navigator.pushNamed(context, '/list-page');
     } catch (error) {
       // ignore: avoid_print
       print(error);

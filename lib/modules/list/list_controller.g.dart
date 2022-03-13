@@ -92,17 +92,6 @@ mixin _$ListController on ListControllerBase, Store {
       ActionController(name: 'ListControllerBase');
 
   @override
-  dynamic separetaResponsableValues(List<ActionEvent> list) {
-    final _$actionInfo = _$ListControllerBaseActionController.startAction(
-        name: 'ListControllerBase.separetaResponsableValues');
-    try {
-      return super.separetaResponsableValues(list);
-    } finally {
-      _$ListControllerBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   dynamic filter() {
     final _$actionInfo = _$ListControllerBaseActionController.startAction(
         name: 'ListControllerBase.filter');

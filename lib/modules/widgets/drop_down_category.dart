@@ -1,19 +1,17 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/config/style.dart';
 import 'package:google_action_plan/modules/action/action_controller.dart';
 
-class DropDownResponsable extends StatefulWidget {
-  const DropDownResponsable({Key? key}) : super(key: key);
+class DropDownCategory extends StatefulWidget {
+  const DropDownCategory({Key? key}) : super(key: key);
 
   @override
-  _DropDownResponsableState createState() => _DropDownResponsableState();
+  _DropDownCategoryState createState() => _DropDownCategoryState();
 }
 
-class _DropDownResponsableState extends State<DropDownResponsable> {
+class _DropDownCategoryState extends State<DropDownCategory> {
   @override
   Widget build(BuildContext context) {
     final controller = GetIt.I.get<ActionController>();
@@ -25,7 +23,7 @@ class _DropDownResponsableState extends State<DropDownResponsable> {
             flex: 2,
             child: TypeAheadField(
               textFieldConfiguration: TextFieldConfiguration(
-                  controller: controller.controllerQuem,
+                  controller: controller.controllerCategoria,
                   style: DefaultTextStyle.of(context)
                       .style
                       .copyWith(fontStyle: FontStyle.italic),
@@ -33,14 +31,14 @@ class _DropDownResponsableState extends State<DropDownResponsable> {
               suggestionsCallback: (pattern) async {
                 return BackendService.getSuggestions(
                   pattern,
-                  controller.responsablesList,
+                  controller.categories,
                 );
               },
+              hideSuggestionsOnKeyboardHide: true,
               itemBuilder: (context, suggestion) {
                 final dd = suggestion as Map<String, String>;
                 return ListTile(
-                  leading: const Icon(Icons.person),
-                  title: Text(dd['name']!),
+                  title: Text(dd['cat']!),
                 );
               },
               onSuggestionSelected: (suggestion) {
@@ -48,7 +46,7 @@ class _DropDownResponsableState extends State<DropDownResponsable> {
                 // ignore: avoid_print
                 print(suggestion.toString());
                 // ignore: avoid_print
-                controller.controllerQuem.text = dd['name']!;
+                controller.controllerCategoria.text = dd['cat']!;
               },
             ),
           ),
@@ -67,7 +65,7 @@ class BackendService {
 
     return filteredListy
         .map((e) => {
-              'name': e,
+              'cat': e,
             })
         .toList();
   }

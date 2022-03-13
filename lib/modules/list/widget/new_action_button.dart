@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_action_plan/config/style.dart';
-import 'package:google_action_plan/generated/l10n.dart';
 // import 'package:google_action_plan/modules/list/list_controller.dart';
 
 class NewActionButton extends StatelessWidget {
@@ -8,11 +7,9 @@ class NewActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // late ListController controllerList;
-    // Provider.of<ListController>(context, listen: false);
     return InkWell(
       onTap: () {
-        // controllerList.goToNewActionEventPage();
+        Navigator.pushNamed(context, '/action-page');
       },
       child: Container(
         margin: const EdgeInsets.only(top: 15, left: 15, right: 15),
@@ -22,10 +19,10 @@ class NewActionButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              S.of(context).NOVA_ACAO,
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold),
+            const Text(
+              "Nova ação",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             Container(width: 30),
             const Icon(Icons.add_circle, color: Colors.white)

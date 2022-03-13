@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/modules/login/login_page.dart';
 
 import 'landing_page_controller.dart';
-import 'widgets/configurations.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -33,7 +32,7 @@ class _LandingPageState extends State<LandingPage> {
     if (controllerGlobalAcess.selectPageIndex == 0) {
       return const LoginPage();
     } else if (controllerGlobalAcess.selectPageIndex == 1) {
-      return const Configurations2();
+      return Container();
     }
     return Container();
   }

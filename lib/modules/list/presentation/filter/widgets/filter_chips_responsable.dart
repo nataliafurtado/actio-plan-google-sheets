@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_action_plan/generated/l10n.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/modules/list/list_controller.dart';
 import 'package:google_action_plan/modules/widgets/chips_filter.dart';
 
@@ -14,7 +14,7 @@ class _FilterChipsResponsableState extends State<FilterChipsResponsable> {
   late ListController controllerList;
   @override
   Widget build(BuildContext context) {
-    // controllerList = Provider.of<ListController>(context, listen: false);
+    controllerList = GetIt.I.get<ListController>();
     return ChipsFilter(
       textDefault: controllerList.selectedResponsable,
       width: 150,
@@ -39,7 +39,7 @@ class _FilterChipsResponsableState extends State<FilterChipsResponsable> {
                   return index == controllerList.responsables.length
                       ? ListTile(
                           leading: const Icon(Icons.not_interested),
-                          title: Text(S.of(context).TODAS),
+                          title: const Text('Todas'),
                           onTap: () {
                             Navigator.pop(context);
                             controllerList.filterResponsableCleanFilter();

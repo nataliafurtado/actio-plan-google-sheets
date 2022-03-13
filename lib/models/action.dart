@@ -9,7 +9,7 @@ class ActionEvent {
   String? feedBack;
   String? obs;
   String? rowToEdit;
-  String? action;
+  String? id;
 
   ActionEvent({
     this.data,
@@ -22,7 +22,7 @@ class ActionEvent {
     this.feedBack,
     this.obs,
     this.rowToEdit,
-    this.action,
+    this.id,
   });
 
   factory ActionEvent.fromJson(dynamic json, int rowToEdit) {
@@ -37,7 +37,6 @@ class ActionEvent {
       feedBack: "${json[7]}",
       obs: "${json[8]}",
       rowToEdit: (rowToEdit + 2).toString(),
-      action: "",
     );
   }
 
@@ -52,6 +51,6 @@ class ActionEvent {
         'feedBack': feedBack ?? "",
         'obs': obs ?? "",
         'rowToEdit': rowToEdit ?? "",
-        'action': action,
+        'id': id ?? "",
       };
 }
