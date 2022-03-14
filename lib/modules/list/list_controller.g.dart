@@ -24,6 +24,21 @@ mixin _$ListController on ListControllerBase, Store {
     });
   }
 
+  final _$listPageStateAtom = Atom(name: 'ListControllerBase.listPageState');
+
+  @override
+  ListPageState get listPageState {
+    _$listPageStateAtom.reportRead();
+    return super.listPageState;
+  }
+
+  @override
+  set listPageState(ListPageState value) {
+    _$listPageStateAtom.reportWrite(value, super.listPageState, () {
+      super.listPageState = value;
+    });
+  }
+
   final _$responsablesAtom = Atom(name: 'ListControllerBase.responsables');
 
   @override
@@ -161,6 +176,7 @@ mixin _$ListController on ListControllerBase, Store {
   String toString() {
     return '''
 actions: ${actions},
+listPageState: ${listPageState},
 responsables: ${responsables},
 isToShowResponsable: ${isToShowResponsable},
 selectedFilterStatus: ${selectedFilterStatus}

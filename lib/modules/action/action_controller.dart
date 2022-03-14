@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_action_plan/functions/functions.dart';
-import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
-import 'package:google_action_plan/modules/widgets/dialog_circular_progress_indicator.dart';
+import 'package:google_action_plan/infrastructure/repositories_impl/list_repository.dart';
 import 'package:mobx/mobx.dart';
 
-import 'package:google_action_plan/models/action.dart';
+import 'package:google_action_plan/data/models/action.dart';
 
 part 'action_controller.g.dart';
+
+enum ActionPageState {
+  loading,
+  success,
+}
 
 class ActionController = ActionControllerBase with _$ActionController;
 
@@ -14,14 +18,20 @@ abstract class ActionControllerBase with Store {
   final ListRepository listRepository;
   ActionControllerBase({
     required this.listRepository,
-  });
+  }) {
+    // ignore: avoid_print
+    print('abriu action controller');
+  }
 
   @observable
   ActionEvent? editableActionEvent;
 
+  @observable
+  ActionPageState actionPageState = ActionPageState.success;
+
   List<String> responsablesList = [];
   List<String> categories = [];
-  String selectedResponsable = '';
+
   String selectedStatus = 'EM PROGRESSO';
   late bool isNewActionEvent = false;
 
@@ -51,7 +61,7 @@ abstract class ActionControllerBase with Store {
     controllerCategoria.text = editableActionEvent!.categoria!;
     controllerOque.text = editableActionEvent!.oQue!;
     controllerComo.text = editableActionEvent!.como!;
-    selectedResponsable = editableActionEvent!.quem!;
+    controllerQuem.text = editableActionEvent!.quem!;
     controllerFeedBack.text = editableActionEvent!.feedBack!;
     controllerObs.text = editableActionEvent!.obs!;
     prazo = editableActionEvent!.prazo!;
@@ -59,13 +69,19 @@ abstract class ActionControllerBase with Store {
     selectedStatus = editableActionEvent!.status!;
   }
 
-  saveActionEvent() async {
-    print(controllerQuem.text);
-    // showCustomDialog(const DialogCircularProgressIndicator());
-    // // listRepository
-    // // await _listRepository.doPost(loadActionEventObject());
-    // await Future.delayed(const Duration(seconds: 1));
-    // // Navigator.popAndPushNamed(context, '/list-page');
+  saveActionEvent(BuildContext context) async {
+    actionPageState = ActionPageState.loading;
+    if (editableActionEvent == null) {
+      await listRepository.saveActionEvent(
+        loadActionEventObject(),
+      );
+    } else {
+      await listRepository.editActionEvent(
+        loadActionEventObject(),
+      );
+    }
+
+    Navigator.pushNamedAndRemoveUntil(context, "/list-page", (route) => false);
   }
 
   ActionEvent loadActionEventObject() {
@@ -74,7 +90,7 @@ abstract class ActionControllerBase with Store {
       categoria: controllerCategoria.text,
       oQue: controllerOque.text,
       como: controllerComo.text,
-      quem: selectedResponsable,
+      quem: controllerQuem.text,
       prazo: formatData(prazo, false),
       status: selectedStatus,
       feedBack: controllerFeedBack.text,
@@ -82,15 +98,5 @@ abstract class ActionControllerBase with Store {
       rowToEdit:
           editableActionEvent == null ? "" : editableActionEvent!.rowToEdit,
     );
-  }
-
-  deleteactionEvent(int index) async {
-    showCustomDialog(const DialogCircularProgressIndicator());
-    // await _listRepository.doPost(ActionEvent(
-    //   rowToEdit: action.rowToEdit,
-    //   action: Constants.delete,
-    // ));
-    // Navigator.pop(context);
-    // loadData();
   }
 }

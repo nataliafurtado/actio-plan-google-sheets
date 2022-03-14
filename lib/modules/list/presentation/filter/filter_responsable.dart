@@ -1,4 +1,4 @@
-import 'package:google_action_plan/models/action.dart';
+import 'package:google_action_plan/data/models/action.dart';
 
 class FilterResponsable {
   static List<ActionEvent> fiter(

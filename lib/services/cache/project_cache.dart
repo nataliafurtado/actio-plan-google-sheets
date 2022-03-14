@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:google_action_plan/modules/list/domain/entities/project.dart';
+import 'package:google_action_plan/domain/entities/project.dart';
 import 'package:google_action_plan/services/cache/cache.dart';
 
 class ProjectCache {
@@ -22,10 +22,14 @@ class ProjectCache {
     );
   }
 
-  Project getProject() {
+  Project? getProject() {
+    final projectString = cache.getFromCache(projectKey);
+    if (projectString == null) {
+      return null;
+    }
     return Project.fromJson(
       json.decode(
-        cache.getFromCache(projectKey),
+        projectString,
       ),
     );
   }

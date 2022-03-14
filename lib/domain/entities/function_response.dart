@@ -1,5 +1,4 @@
-import 'package:google_action_plan/modules/list/domain/entities/response.dart';
-
+import 'package:google_action_plan/domain/entities/response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'function_response.g.dart';

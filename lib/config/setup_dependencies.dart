@@ -1,9 +1,8 @@
 import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/config/di.dart';
 import 'package:google_action_plan/id_sheet_singleton.dart';
+import 'package:google_action_plan/infrastructure/repositories_impl/list_repository.dart';
 import 'package:google_action_plan/modules/action/action_controller.dart';
-import 'package:google_action_plan/modules/landing_page/landing_page_controller.dart';
-import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
 import 'package:google_action_plan/modules/list/list_controller.dart';
 import 'package:google_action_plan/modules/login/login_controller.dart';
 import 'package:dio/dio.dart';
@@ -55,10 +54,6 @@ void _setupRepositories() {
 }
 
 Future<void> _setupControllers() async {
-  DI.registerLazySingleton<LandingPageController>(
-    () => LandingPageController(),
-  );
-
   DI.registerLazySingleton<LoginController>(
     () => LoginController(
       listRepository: GetIt.I.get<ListRepository>(),
@@ -76,11 +71,13 @@ Future<void> _setupControllers() async {
   );
 
   DI.registerLazySingleton<ActionController>(
-    () => ActionController(
-      listRepository: GetIt.I.get<ListRepository>(),
-    ),
-    pathToKeepAlive: '/action-page',
-  );
+      () => ActionController(
+            listRepository: GetIt.I.get<ListRepository>(),
+          ),
+      pathToKeepAlive: '/action-page', disposingFunction: (c) {
+    // ignore: avoid_print
+    print('fechgou action controller ');
+  });
 }
 
 void _setupDio() async {

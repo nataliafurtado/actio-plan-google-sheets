@@ -9,4 +9,11 @@ class NavigatorObserverBot extends NavigatorObserver {
       GetIt.I.get<DI>().loadPagePath(route.settings.name!);
     }
   }
+
+  // @override
+  // void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  //   if (route.settings.name != null) {
+  //     print(" did pop " + route.settings.name.toString());
+  //   }
+  // }
 }

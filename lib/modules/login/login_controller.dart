@@ -1,13 +1,27 @@
 import 'package:flutter/cupertino.dart';
-import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
+import 'package:google_action_plan/infrastructure/repositories_impl/list_repository.dart';
+import 'package:google_action_plan/services/navigator_service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mobx/mobx.dart';
 
-class LoginController {
+part 'login_controller.g.dart';
+
+enum LoginPageState {
+  loading,
+  success,
+}
+
+class LoginController = LoginControllerBase with _$LoginController;
+
+abstract class LoginControllerBase with Store {
   final ListRepository listRepository;
-  LoginController({required this.listRepository});
+  LoginControllerBase({required this.listRepository});
 
   GoogleSignInAccount? googleSignInAccount;
   String? token;
+
+  @observable
+  LoginPageState loginPageState = LoginPageState.loading;
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     // Optional clientId
@@ -30,8 +44,9 @@ class LoginController {
         '280281413857-70ucdtinbmnjp937d91sn0lqrj9s5td6.apps.googleusercontent.com',
   );
 
-  Future<void> makeLogin(context) async {
+  Future<void> makeLogin() async {
     try {
+      loginPageState = LoginPageState.loading;
       googleSignInAccount = await _googleSignIn.signIn();
 
       final ggAuth = await googleSignInAccount!.authentication;
@@ -47,11 +62,21 @@ class LoginController {
       // Navigator.pushNamed(context, '/launch-to-gcp');
       //
       //
-      await listRepository.seloadCachedParameters();
-      Navigator.pushNamed(context, '/list-page');
+      await Navigator.popAndPushNamed(
+          NavigationService.getNavigator().currentContext!, '/list-page');
     } catch (error) {
       // ignore: avoid_print
       print(error);
+    }
+  }
+
+  makeAutomaticLogim(context) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (await listRepository.loadCachedParameters()) {
+      await makeLogin();
+    } else {
+      loginPageState = LoginPageState.success;
     }
   }
 

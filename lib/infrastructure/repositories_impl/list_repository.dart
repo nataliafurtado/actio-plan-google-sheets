@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:google_action_plan/models/action.dart';
+import 'package:google_action_plan/domain/entities/file.dart';
+import 'package:google_action_plan/domain/entities/function_response.dart';
+import 'package:google_action_plan/domain/entities/function_set.dart';
+import 'package:google_action_plan/domain/entities/project.dart';
+import 'package:google_action_plan/domain/entities/user.dart';
+import 'package:google_action_plan/domain/entities/values.dart';
+import 'package:google_action_plan/data/models/action.dart';
 
-import 'package:google_action_plan/modules/list/domain/entities/file.dart';
-import 'package:google_action_plan/modules/list/domain/entities/function_response.dart';
-import 'package:google_action_plan/modules/list/domain/entities/function_set.dart';
-import 'package:google_action_plan/modules/list/domain/entities/project.dart';
-import 'package:google_action_plan/modules/list/domain/entities/user.dart';
-import 'package:google_action_plan/modules/list/domain/entities/values.dart';
 import 'package:google_action_plan/services/cache/project_cache.dart';
 
 class ListRepository {
@@ -30,9 +30,14 @@ class ListRepository {
     projectCache.saveProject(project);
   }
 
-  Future<void> seloadCachedParameters() async {
-    project = projectCache.getProject();
+  Future<bool> loadCachedParameters() async {
+    final projectFromCache = projectCache.getProject();
+    if (projectFromCache == null) {
+      return false;
+    }
+    project = projectFromCache;
     sheetId = projectCache.getSheetId();
+    return true;
   }
 
   Future<void> createProject() async {
@@ -45,7 +50,7 @@ class ListRepository {
       );
 
       // ignore: avoid_print
-      print(response);
+      // print(response);
       updateProjectProperties(Project.fromJson(response.data));
     } catch (e) {
       // ignore: avoid_print
@@ -213,6 +218,47 @@ class ListRepository {
     print(functionGetSheetId.response!.result!);
   }
 
+  Future<void> editActionEvent(ActionEvent actionEvent) async {
+    final functionGetSheet = await runScript(
+      {
+        "function": "edit",
+        "parameters": [
+          actionEvent.rowToEdit,
+          actionEvent.data,
+          actionEvent.categoria,
+          actionEvent.oQue,
+          actionEvent.como,
+          actionEvent.quem,
+          actionEvent.prazo,
+          actionEvent.status,
+          actionEvent.feedBack,
+          actionEvent.obs,
+          sheetId,
+        ],
+        "devMode": true
+      },
+    );
+    final functionGetSheetId = FunctionResponse.fromJson(functionGetSheet);
+    // ignore: avoid_print
+    print(functionGetSheetId.response!.result!);
+  }
+
+  Future<void> deleteActionEvent(ActionEvent actionEvent) async {
+    final functionGetSheet = await runScript(
+      {
+        "function": "deleteRow",
+        "parameters": [
+          actionEvent.rowToEdit,
+          sheetId,
+        ],
+        "devMode": true
+      },
+    );
+    final functionGetSheetId = FunctionResponse.fromJson(functionGetSheet);
+    // ignore: avoid_print
+    print(functionGetSheetId.response!.result!);
+  }
+
   dynamic runScript(Map<String, dynamic> data) async {
     try {
       var response = await dio.post(
@@ -220,8 +266,6 @@ class ListRepository {
         'https://script.googleapis.com/v1/scripts/1qIj0K3sV1OIEKRZwqZHyomj2OzAxpne3hOaQkMurRCTWM7ApepsH2xP_:run',
         data: data,
       );
-      // ignore: avoid_print
-      print(response);
       return response.data;
     } catch (e) {
       // ignore: avoid_print
@@ -252,7 +296,7 @@ class ListRepository {
           name: 'codigo',
           type: "SERVER_JS",
           source:
-              "function getSheetId(id){   \n   var sheet;\n   var app = SpreadsheetApp;\n   try{ \n     if(id != null){\n      var sheet = app.openById(id);     \n     }    \n      if(sheet==null){\n      sheet = app.create(\"Plano de Ação\");\n      app.setActiveSpreadsheet(sheet); \n      \n    } \n  }catch(exc){\n   console.log(\"Somenthing went wrong\");  \n  }\n  console.log(sheet.getId());  \n  return sheet.getId();\n}\n\nfunction getSheet(id){\n  try{\n  var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n  var lastRow = sheet.getLastRow();\n  var lastColum = sheet.getLastColumn();\n  var originalData = sheet.getRange(2,1,lastRow-1,lastColum).getValues();\n\n  }catch(exc){\n   console.log(\"Somenthing went wrong\");  \n  }\n  var JSONString = JSON.stringify(originalData);\n  var JSONOutput = ContentService.createTextOutput(JSONString);\n  JSONOutput.setMimeType(ContentService.MimeType.JSON);\n  return JSONOutput\n}\n\nfunction createInitialConfig(id){\n  var result =\"SUCCESS\";  \n  var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n   if(sheet.getRange(\"A1\").getValue()==\"CRIAÇÂO\"){\n       return result;\n   }\n\n  sheet.insertRowBefore(1).getRange(1, 1, 1, 9).setValues([[\"CRIAÇÂO\", \"CATEGORIA\", \"O QUE ?\", \"COMO ?\",\"QUEM ?\",\"PRAZO\",\"STATUS\",\"FEED BACK\",\"OBS\"]]);\n\n  sheet.appendRow([\"28/12/2020\", \"EMPREGO\", \"Curriculo\", \"Fazer curriculo com ajuda de pedro e com manual do email de pedro\",\"Natália\",\"06/10/2021\",\"EM PROGRESSO\",\"TESTE\",\"TESTE\"]); \n\n  sheet.getRange(\"A1:I1\").setFontWeight(\"bold\").setBackground(\"#4a86e8\").setFontColor(\"#ffffff\").setHorizontalAlignment(\"center\");\n  sheet.setColumnWidth(4,320);\n  // sheet.setColumnWidth(5,50);\n  sheet.setColumnWidth(7,120);\n\n  sheet.getRange(\"A1:I100\").setBorder(true, true, true, true, true, true).setVerticalAlignment(\"middle\");\n  sheet.getRange(\"A:A\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"B:B\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"C:C\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"E:E\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"F:F\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"G:G\").setHorizontalAlignment(\"center\");\n\n  sheet.setRowHeights(1, 100, 40);\n\n  var rule = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"EM PROGRESSO\")\n    .setBackground(\"#ffff00\") \n    .setBold(true)\n    .setFontColor(\"#434343\")   \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n  var rule1 = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"ATRASADA\")\n    .setBackground(\"#fb1744\")   \n    .setBold(true)\n    .setFontColor(\"#ffffff\")  \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n\n  var rule2 = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"CANCELADA\")\n    .setBackground(\"#efefef\") \n    .setBold(true)   \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n  var rule3 = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"COMPLETA\")\n    .setBackground(\"#69f0ae\")\n    .setBold(true)\n    .setFontColor(\"#666666\")  \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n  var rule4 = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"EM ESPERA\")\n    .setBackground(\"#d9d9d9\") \n    .setBold(true)   \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n\n\n  var rule5 = SpreadsheetApp.newConditionalFormatRule()\n    .whenDateAfter(SpreadsheetApp.RelativeDate.TODAY)\n    .setBackground(\"#69f0ae\")\n    .setBold(true)   \n    .setRanges([sheet.getRange(\"F:F\")])\n    .build();\n\n  var rule6 = SpreadsheetApp.newConditionalFormatRule()\n    .whenDateBefore(SpreadsheetApp.RelativeDate.TODAY)\n    .setBackground(\"#fb1744\")\n    .setBold(true)\n    .setFontColor(\"#ffffff\")    \n    .setRanges([sheet.getRange(\"F:F\")])\n    .build(); \n\n  var rule7 = SpreadsheetApp.newConditionalFormatRule()\n    .whenDateEqualTo(SpreadsheetApp.RelativeDate.TODAY)\n    .setBackground(\"#ffff00\")\n    .setBold(true)       \n    .setRanges([sheet.getRange(\"F:F\")])\n    .build();    \n\n  var rules = sheet.getConditionalFormatRules();\n    rules.push(rule);\n    rules.push(rule1);\n    rules.push(rule2);\n    rules.push(rule3);\n    rules.push(rule4);\n    rules.push(rule5);\n    rules.push(rule6);\n    rules.push(rule7);\n\n  sheet.setConditionalFormatRules(rules);\n\n\n  return result;\n}\n\nfunction save(request){\n  var result = \"SUCCESS\";\n  try{   \n    var data = request.parameter.data;\n    var categoria = request.parameter.categoria;\n    var oQue = request.parameter.oQue;\n    var como = request.parameter.como;\n    var quem = request.parameter.quem;\n    var prazo = request.parameter.prazo;\n    var status = request.parameter.status;\n    var feedBack = request.parameter.feedBack;\n    var obs = request.parameter.obs;\n    var id = request.parameter.id;\n    var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n    sheet.setConditionalFormatRules\n    sheet.appendRow([data, categoria, oQue, como,quem,prazo,status,feedBack,obs]);\n  }catch(exc){\n    result = exc;\n  }\n  return result;\n\n}\n\n\nfunction edit(request){\n  var result = \"SUCCESS\";\n  try{   \n    var row = request.parameter.rowToEdit;\n    var data = request.parameter.data;\n    var categoria = request.parameter.categoria;\n    var oQue = request.parameter.oQue;\n    var como = request.parameter.como;\n    var quem = request.parameter.quem;\n    var prazo = request.parameter.prazo;\n    var status = request.parameter.status;\n    var feeBack = request.parameter.feeBack;\n    var obs = request.parameter.obs;\n    var id = request.parameter.id;\n    var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n    sheet.getRange(row,1,1,9).setValues([[data, categoria,oQue,como,quem,prazo,status,feeBack,obs]]);\n  }catch(exc){\n    result = exc;\n  }\n  return result;\n}\n\nfunction deleteRow(request){\n  var result = \"SUCCESS\";\n  try{   \n    var row = request.parameter.rowToEdit; \n    var id = request.parameter.id;\n    var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n    sheet.deleteRow(row);   \n  }catch(exc){\n    result = exc;\n  }\n  return result;\n}\n\n\n\n\n",
+              "function getSheetId(id){   \n   var sheet;\n   var app = SpreadsheetApp;\n   try{ \n     if(id != null){\n      var sheet = app.openById(id);     \n     }    \n      if(sheet==null){\n      sheet = app.create(\"Plano de Ação\");\n      app.setActiveSpreadsheet(sheet); \n      \n    } \n  }catch(exc){\n   console.log(\"Somenthing went wrong\");  \n  }\n  console.log(sheet.getId());  \n  return sheet.getId();\n}\n\nfunction getSheet(id){\n  try{\n  var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n  var lastRow = sheet.getLastRow();\n  var lastColum = sheet.getLastColumn();\n  var originalData = sheet.getRange(2,1,lastRow-1,lastColum).getValues();\n\n  }catch(exc){\n   console.log(\"Somenthing went wrong\");  \n  }\n  var JSONString = JSON.stringify(originalData);\n  var JSONOutput = ContentService.createTextOutput(JSONString);\n  JSONOutput.setMimeType(ContentService.MimeType.JSON);\n  return JSONOutput\n}\n\nfunction createInitialConfig(id){\n  var result =\"SUCCESS\";  \n  var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n   if(sheet.getRange(\"A1\").getValue()==\"CRIAÇÂO\"){\n       return result;\n   }\n\n  sheet.insertRowBefore(1).getRange(1, 1, 1, 9).setValues([[\"CRIAÇÂO\", \"CATEGORIA\", \"O QUE ?\", \"COMO ?\",\"QUEM ?\",\"PRAZO\",\"STATUS\",\"FEED BACK\",\"OBS\"]]);\n\n  sheet.appendRow([\"28/12/2020\", \"EMPREGO\", \"Curriculo\", \"Fazer curriculo com ajuda de pedro e com manual do email de pedro\",\"Natália\",\"06/10/2021\",\"EM PROGRESSO\",\"TESTE\",\"TESTE\"]); \n\n  sheet.getRange(\"A1:I1\").setFontWeight(\"bold\").setBackground(\"#4a86e8\").setFontColor(\"#ffffff\").setHorizontalAlignment(\"center\");\n  sheet.setColumnWidth(4,320);\n  // sheet.setColumnWidth(5,50);\n  sheet.setColumnWidth(7,120);\n\n  sheet.getRange(\"A1:I100\").setBorder(true, true, true, true, true, true).setVerticalAlignment(\"middle\");\n  sheet.getRange(\"A:A\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"B:B\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"C:C\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"E:E\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"F:F\").setHorizontalAlignment(\"center\");\n  sheet.getRange(\"G:G\").setHorizontalAlignment(\"center\");\n\n  sheet.setRowHeights(1, 100, 40);\n\n  var rule = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"EM PROGRESSO\")\n    .setBackground(\"#ffff00\") \n    .setBold(true)\n    .setFontColor(\"#434343\")   \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n  var rule1 = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"ATRASADA\")\n    .setBackground(\"#fb1744\")   \n    .setBold(true)\n    .setFontColor(\"#ffffff\")  \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n\n  var rule2 = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"CANCELADA\")\n    .setBackground(\"#efefef\") \n    .setBold(true)   \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n  var rule3 = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"COMPLETA\")\n    .setBackground(\"#69f0ae\")\n    .setBold(true)\n    .setFontColor(\"#666666\")  \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n  var rule4 = SpreadsheetApp.newConditionalFormatRule()\n    .whenTextContains(\"EM ESPERA\")\n    .setBackground(\"#d9d9d9\") \n    .setBold(true)   \n    .setRanges([sheet.getRange(\"G:G\")])\n    .build();\n\n\n  var rule5 = SpreadsheetApp.newConditionalFormatRule()\n    .whenDateAfter(SpreadsheetApp.RelativeDate.TODAY)\n    .setBackground(\"#69f0ae\")\n    .setBold(true)   \n    .setRanges([sheet.getRange(\"F:F\")])\n    .build();\n\n  var rule6 = SpreadsheetApp.newConditionalFormatRule()\n    .whenDateBefore(SpreadsheetApp.RelativeDate.TODAY)\n    .setBackground(\"#fb1744\")\n    .setBold(true)\n    .setFontColor(\"#ffffff\")    \n    .setRanges([sheet.getRange(\"F:F\")])\n    .build(); \n\n  var rule7 = SpreadsheetApp.newConditionalFormatRule()\n    .whenDateEqualTo(SpreadsheetApp.RelativeDate.TODAY)\n    .setBackground(\"#ffff00\")\n    .setBold(true)       \n    .setRanges([sheet.getRange(\"F:F\")])\n    .build();    \n\n  var rules = sheet.getConditionalFormatRules();\n    rules.push(rule);\n    rules.push(rule1);\n    rules.push(rule2);\n    rules.push(rule3);\n    rules.push(rule4);\n    rules.push(rule5);\n    rules.push(rule6);\n    rules.push(rule7);\n\n  sheet.setConditionalFormatRules(rules);\n\n\n  return result;\n}\n\nfunction save(request){\n  var result = \"SUCCESS\";\n  try{   \n    var data = request.parameter.data;\n    var categoria = request.parameter.categoria;\n    var oQue = request.parameter.oQue;\n    var como = request.parameter.como;\n    var quem = request.parameter.quem;\n    var prazo = request.parameter.prazo;\n    var status = request.parameter.status;\n    var feedBack = request.parameter.feedBack;\n    var obs = request.parameter.obs;\n    var id = request.parameter.id;\n    var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n    sheet.setConditionalFormatRules\n    sheet.appendRow([data, categoria, oQue, como,quem,prazo,status,feedBack,obs]);\n  }catch(exc){\n    result = exc;\n  }\n  return result;\n\n}\n\n\nfunction edit(row,request){\n  var result = \"SUCCESS\";\n  try{   \n    var row = request.parameter.rowToEdit;\n    var data = request.parameter.data;\n    var categoria = request.parameter.categoria;\n    var oQue = request.parameter.oQue;\n    var como = request.parameter.como;\n    var quem = request.parameter.quem;\n    var prazo = request.parameter.prazo;\n    var status = request.parameter.status;\n    var feeBack = request.parameter.feeBack;\n    var obs = request.parameter.obs;\n    var id = request.parameter.id;\n    var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n    sheet.getRange(row,1,1,9).setValues([[data, categoria,oQue,como,quem,prazo,status,feeBack,obs]]);\n  }catch(exc){\n    result = exc;\n  }\n  return result;\n}\n\nfunction deleteRow(request){\n  var result = \"SUCCESS\";\n  try{   \n    var row = request.parameter.rowToEdit; \n    var id = request.parameter.id;\n    var sheet = SpreadsheetApp.openById(id).getSheets()[0];\n    sheet.deleteRow(row);   \n  }catch(exc){\n    result = exc;\n  }\n  return result;\n}\n\n\n\n\n",
           lastModifyUser: User(
             domain: projectPassed.creator!.domain,
             email: projectPassed.creator!.email,

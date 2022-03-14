@@ -52,7 +52,7 @@ class _DropDownStatusState extends State<DropDownStatus> {
         underline: Container(color: Colors.transparent),
         onChanged: (newVal) {
           controller.selectedStatus = newVal!;
-          this.setState(() {});
+          setState(() {});
         },
       ),
     );

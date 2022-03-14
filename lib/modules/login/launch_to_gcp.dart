@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/config/style.dart';
-import 'package:google_action_plan/modules/list/infrastructure/repositories_impl/list_repository.dart';
+import 'package:google_action_plan/infrastructure/repositories_impl/list_repository.dart';
 import 'package:google_action_plan/modules/login/teddy/widgets/title_widget.dart';
 import 'package:google_action_plan/modules/login/widgets/copy_button.dart';
 import 'package:google_action_plan/modules/widgets/button.dart';
@@ -62,7 +62,7 @@ class LauchToGcp extends StatelessWidget {
                 InkWell(
                   onTap: () async {
                     final id =
-                        GetIt.I.get<ProjectCache>().getProject().scriptId;
+                        GetIt.I.get<ProjectCache>().getProject()!.scriptId;
                     await launch(
                       "https://script.google.com/home/projects/$id/settings",
                     );

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:google_action_plan/config/style.dart';
 import 'package:intl/intl.dart';
 
 import '../assets/constants.dart';
-import '../services/navigator_service.dart';
 
 Color statusColors(String status) {
   if (Constants.emProgresso == status.toUpperCase()) {
@@ -40,22 +38,14 @@ double flexWidthSpacing(BuildContext context, double value) {
 }
 
 String formatData(String datePassed, bool returnSemPrazo) {
-  if (datePassed.isNotEmpty) {
+  if (datePassed.isNotEmpty && datePassed.contains('T')) {
     DateTime brazilianDate = DateTime.parse(datePassed);
     return DateFormat('dd/MM/yyyy').format(brazilianDate);
+  } else if (datePassed.isNotEmpty) {
+    return datePassed;
   } else {
     return returnSemPrazo ? "Sem prazo" : "";
   }
-}
-
-void showCustomDialog(Widget dialog) {
-  showDialog(
-    context: NavigationService.getNavigator().currentState!.context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return dialog;
-    },
-  );
 }
 
 double calculateBottonButtonsBottonDistance(context, totalSizeOfAllWidgets) {
@@ -64,4 +54,11 @@ double calculateBottonButtonsBottonDistance(context, totalSizeOfAllWidgets) {
   } else {
     return MediaQuery.of(context).size.height - totalSizeOfAllWidgets;
   }
+}
+
+DateTime brazilStringToDateTime(String date) {
+  if (date.contains('T')) {
+    return DateTime.parse(date);
+  }
+  return DateFormat('dd/MM/yyyy').parse(date);
 }

@@ -1,4 +1,4 @@
-import 'package:google_action_plan/modules/list/domain/entities/values.dart';
+import 'package:google_action_plan/domain/entities/values.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'function_set.g.dart';

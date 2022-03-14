@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_action_plan/config/style.dart';
 import 'package:google_action_plan/modules/login/teddy/widgets/input_helper.dart';
 
@@ -94,6 +93,7 @@ class _TrackingTextInputState extends State<TrackingTextInput> {
             obscureText: widget.isObscured!,
             validator: (dd) {
               widget.validator!(dd);
+              return null;
             },
           ),
         ),

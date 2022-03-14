@@ -25,18 +25,19 @@ mixin _$ActionController on ActionControllerBase, Store {
     });
   }
 
-  final _$responsablesAtom = Atom(name: 'ActionControllerBase.responsables');
+  final _$actionPageStateAtom =
+      Atom(name: 'ActionControllerBase.actionPageState');
 
   @override
-  List<String> get responsablesList {
-    _$responsablesAtom.reportRead();
-    return super.responsablesList;
+  ActionPageState get actionPageState {
+    _$actionPageStateAtom.reportRead();
+    return super.actionPageState;
   }
 
   @override
-  set responsablesList(List<String> value) {
-    _$responsablesAtom.reportWrite(value, super.responsablesList, () {
-      super.responsablesList = value;
+  set actionPageState(ActionPageState value) {
+    _$actionPageStateAtom.reportWrite(value, super.actionPageState, () {
+      super.actionPageState = value;
     });
   }
 
@@ -51,7 +52,7 @@ mixin _$ActionController on ActionControllerBase, Store {
   String toString() {
     return '''
 editableActionEvent: ${editableActionEvent},
-responsables: ${responsablesList}
+actionPageState: ${actionPageState}
     ''';
   }
 }

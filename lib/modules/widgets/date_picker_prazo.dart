@@ -27,7 +27,7 @@ class _DatePickerPrazoState extends State<DatePickerPrazo> {
           color: controller.prazo.isEmpty
               ? Colors.indigo[100]
               : prazoColors(
-                  DateTime.parse(controller.prazo),
+                  brazilStringToDateTime(controller.prazo),
                 ),
         ),
         alignment: Alignment.center,

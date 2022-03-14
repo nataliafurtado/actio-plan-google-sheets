@@ -1,5 +1,5 @@
-import 'package:google_action_plan/modules/list/domain/entities/file.dart';
-import 'package:google_action_plan/modules/list/domain/entities/user.dart';
+import 'package:google_action_plan/domain/entities/file.dart';
+import 'package:google_action_plan/domain/entities/user.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 

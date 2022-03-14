@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/config/style.dart';
-// import 'package:google_action_plan/modules/list/list_controller.dart';
+import 'package:google_action_plan/modules/list/list_controller.dart';
 
 class NewActionButton extends StatelessWidget {
   const NewActionButton({Key? key}) : super(key: key);
@@ -9,7 +10,7 @@ class NewActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, '/action-page');
+        GetIt.I.get<ListController>().goToEditActionEventPage(context: context);
       },
       child: Container(
         margin: const EdgeInsets.only(top: 15, left: 15, right: 15),

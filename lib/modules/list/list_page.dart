@@ -3,8 +3,10 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/config/style.dart';
 import 'package:google_action_plan/modules/list/widget/new_action_button.dart';
+import 'package:google_action_plan/modules/list/widget/trash.dart';
 import 'package:google_action_plan/modules/widgets/button.dart';
 import 'package:google_action_plan/modules/widgets/card.dart';
+import 'package:google_action_plan/modules/widgets/circular.dart';
 
 import 'presentation/filter/filters.dart';
 import 'list_controller.dart';
@@ -35,7 +37,10 @@ class _ListPageState extends State<ListPage> {
       backgroundColor: Style.iceBackground,
       body: Observer(
         builder: (_) {
-          controllerList.actions;
+          if (controllerList.listPageState == ListPageState.loading) {
+            return const Circular();
+          }
+
           return Column(
             children: [
               Container(height: 20),
@@ -55,8 +60,6 @@ class _ListPageState extends State<ListPage> {
               ),
               //
               const Filters(),
-
-              //
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () {
@@ -72,14 +75,16 @@ class _ListPageState extends State<ListPage> {
                               dismissThresholds: const {
                                 DismissDirection.endToStart: 0.9
                               },
-                              background: backGroudTrash(),
+                              background: const Trash(),
                               direction: DismissDirection.endToStart,
-                              key: Key(index.toString()),
+                              key: UniqueKey(),
                               onDismissed: (direction) {
-                                // controllerList.deleteactionEvent(index);
+                                controllerList.deleteactionEvent(index);
                               },
                               child: CardAction(
-                                  controllerList.actions[index], index),
+                                controllerList.actions[index],
+                                index,
+                              ),
                               confirmDismiss: dialogShouldDismiss,
                               movementDuration: const Duration(seconds: 1),
                             );
@@ -91,17 +96,6 @@ class _ListPageState extends State<ListPage> {
             ],
           );
         },
-      ),
-    );
-  }
-
-  Container backGroudTrash() {
-    return Container(
-      color: Style.atrasada,
-      alignment: const Alignment(0.9, 0),
-      child: const Icon(
-        Icons.delete,
-        color: Colors.white,
       ),
     );
   }
