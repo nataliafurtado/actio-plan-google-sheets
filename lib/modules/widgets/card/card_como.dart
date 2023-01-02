@@ -16,6 +16,5 @@ class CardComo extends StatelessWidget {
         como,
       ),
     );
-    ;
   }
 }

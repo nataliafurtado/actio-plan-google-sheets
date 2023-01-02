@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_action_plan/config/style.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/widgets/filter_chips_responsable.dart';
+import 'package:google_action_plan/modules/list/presentation/filter/widgets/log_out.dart';
 
 import 'widgets/filter_chips_status.dart';
 
@@ -22,13 +24,20 @@ class _FiltersState extends State<Filters> {
       height: 50,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            const FilterChipsStatus(),
-            Container(width: 16),
-            const FilterChipsResponsable(),
-            Container(width: 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: <Widget>[
+                  const FilterChipsStatus(),
+                  Container(width: 16),
+                  const FilterChipsResponsable(),
+                  Container(width: 8),
+                ],
+              ),
+            ),
+            const LogOut(),
           ],
         ),
       ),

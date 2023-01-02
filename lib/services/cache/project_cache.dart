@@ -34,6 +34,10 @@ class ProjectCache {
     );
   }
 
+  Future<void> removeProject() {
+    return cache.removeCache(projectKey);
+  }
+
   saveSheetId(String id) {
     cache.addToCache(
       sheetId,

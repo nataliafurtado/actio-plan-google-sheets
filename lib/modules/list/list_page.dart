@@ -43,21 +43,21 @@ class _ListPageState extends State<ListPage> {
 
           return Column(
             children: [
-              Container(height: 20),
+              Container(height: 50),
               //
-              Container(
-                height: 20,
-                alignment: Alignment.bottomRight,
-                child: Container(
-                  width: 60,
-                  padding: const EdgeInsets.only(right: 10),
-                  alignment: Alignment.bottomRight,
-                  // child: Icon(
-                  //   Icons.settings,
-                  //   color: Style.primaryColor,
-                  // ),
-                ),
-              ),
+              // Container(
+              //   height: 20,
+              //   alignment: Alignment.bottomRight,
+              //   child: Container(
+              //     width: 60,
+              //     padding: const EdgeInsets.only(right: 10),
+              //     alignment: Alignment.bottomRight,
+              //     child: Icon(
+              //       Icons.settings,
+              //       color: Style.primaryColor,
+              //     ),
+              //   ),
+              // ),
               //
               const Filters(),
               Expanded(

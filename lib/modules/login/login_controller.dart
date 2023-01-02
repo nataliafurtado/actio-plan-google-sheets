@@ -21,7 +21,7 @@ abstract class LoginControllerBase with Store {
   String? token;
 
   @observable
-  LoginPageState loginPageState = LoginPageState.loading;
+  LoginPageState loginPageState = LoginPageState.success;
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     // Optional clientId
@@ -59,14 +59,20 @@ abstract class LoginControllerBase with Store {
       print(token);
       // print(googleSignInAccount!.email);
       // await listRepository.makeInitialConfig();
-      // Navigator.pushNamed(context, '/launch-to-gcp');
+      // Navigator.pushNamed(
+      //   NavigationService.getNavigator().currentContext!,
+      //   '/launch-to-gcp',
+      // );
       //
       //
       await Navigator.popAndPushNamed(
-          NavigationService.getNavigator().currentContext!, '/list-page');
+        NavigationService.getNavigator().currentContext!,
+        '/list-page',
+      );
     } catch (error) {
       // ignore: avoid_print
       print(error);
+      loginPageState = LoginPageState.success;
     }
   }
 

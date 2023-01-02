@@ -17,6 +17,10 @@ class Cache {
     Hive.box(actionplan).put(key, data);
   }
 
+  removeCache(dynamic key) {
+    Hive.box(actionplan).delete(key);
+  }
+
   dynamic getFromCache(String key) {
     return Hive.box(actionplan).get(key);
   }
