@@ -30,8 +30,20 @@ class ListRepository {
     projectCache.saveProject(project);
   }
 
-  Future<void> removeProjectCache() async {
-    await projectCache.removeProject();
+  Future<void> loadOldSheetData(
+    String scriptId,
+    String deployId,
+    String sheetIdPassed,
+  ) async {
+    await getProject(scriptId, deployId);
+    projectCache.saveProject(project);
+
+    sheetId = sheetIdPassed;
+    projectCache.saveSheetId(sheetIdPassed);
+  }
+
+  removeProjectCache() {
+    projectCache.removeProject();
   }
 
   Future<bool> loadCachedParameters() async {
@@ -49,8 +61,7 @@ class ListRepository {
       var response = await dio.post(
         'https://script.googleapis.com/v1/projects',
         data: {
-          //TODO colocar aleatorio aqui
-          "title": "TestNat101",
+          "title": "TestNat110",
         },
       );
 
@@ -108,19 +119,23 @@ class ListRepository {
 
       // ignore: avoid_print
       print(response);
+      project.deploimentId = response.data['deploymentId'];
+      projectCache.saveProject(project);
     } catch (e) {
       // ignore: avoid_print
       print(e);
     }
   }
 
-  Future<void> getProjectContent() async {
+  Future<void> getProject(String scriptId, String deployId) async {
     try {
       var response = await dio.get(
-        'https://script.googleapis.com/v1/projects/${project.scriptId}/content',
+        'https://script.googleapis.com/v1/projects/$scriptId',
       );
       // ignore: avoid_print
       print(response);
+      updateProjectProperties(Project.fromJson(response.data));
+      project.deploimentId = deployId;
     } catch (e) {
       // ignore: avoid_print
       print(e);
@@ -173,7 +188,7 @@ class ListRepository {
     }
     responsablesList = responsablesList.toSet().toList();
     // if (!responsablesList.contains("")) {
-    //   responsablesList.add("");
+    //   responsablesList.aupdateProjectPropertiesdd("");
     // }
     projectCache.saveResponsablesList(responsablesList);
   }
@@ -267,7 +282,7 @@ class ListRepository {
     try {
       var response = await dio.post(
         'https://script.googleapis.com/v1/scripts/${project.deploimentId}:run',
-        // 'https://script.googleapis.com/v1/scripts/AKfycby-9WB6FQNVR0-ss9iUBKAU9MUXYoqRT-OKCuo-Ij8GWiuKqr8ZGgg3k3_7SHOcR36j:run',
+        // 'https://script.googleapis.com/v1/scripts/AKfycbxUkGateHZMGlZ4B1txvGt4phG831gXEnwPocqxQ6SgjnIKA6JucRr1WYQr5IW1bKV04g:run',
         data: data,
       );
       return response.data;

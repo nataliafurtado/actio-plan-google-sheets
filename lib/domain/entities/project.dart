@@ -9,6 +9,7 @@ part 'project.g.dart';
 class Project {
   String? scriptId;
   String? deploimentId;
+  String? sheetId;
 
   String? title;
   String? updateTime;

@@ -28,12 +28,15 @@ class TitleWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           spaceAux,
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 20,
+          Expanded(
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 20,
+              ),
+              // style: Style.titleFont,
             ),
-            // style: Style.titleFont,
           ),
           logout == null
               ? spaceAux

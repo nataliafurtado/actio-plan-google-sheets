@@ -39,9 +39,9 @@ class LogOut extends StatelessWidget {
                   color: Style.primaryColor,
                 ),
                 title: const Text('Sair'),
-                onTap: () async {
+                onTap: () {
                   GetIt.I.get<LoginController>().makeLogout();
-                  await GetIt.I.get<ListRepository>().removeProjectCache();
+                  GetIt.I.get<ListRepository>().removeProjectCache();
                   Navigator.popAndPushNamed(
                     NavigationService.getNavigator().currentContext!,
                     '/',

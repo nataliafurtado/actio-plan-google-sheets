@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_action_plan/config/style.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/widgets/filter_chips_responsable.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/widgets/log_out.dart';
 

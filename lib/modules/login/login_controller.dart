@@ -58,17 +58,7 @@ abstract class LoginControllerBase with Store {
       // ignore: avoid_print
       print(token);
       // print(googleSignInAccount!.email);
-      // await listRepository.makeInitialConfig();
-      // Navigator.pushNamed(
-      //   NavigationService.getNavigator().currentContext!,
-      //   '/launch-to-gcp',
-      // );
-      //
-      //
-      await Navigator.popAndPushNamed(
-        NavigationService.getNavigator().currentContext!,
-        '/list-page',
-      );
+
     } catch (error) {
       // ignore: avoid_print
       print(error);
@@ -76,15 +66,40 @@ abstract class LoginControllerBase with Store {
     }
   }
 
-  makeAutomaticLogim(context) async {
-    await Future.delayed(const Duration(seconds: 1));
+  makeInitialConfig() async {
+    await listRepository.makeInitialConfig();
+    Navigator.pushNamed(
+      NavigationService.getNavigator().currentContext!,
+      '/launch-to-gcp',
+    );
+  }
 
-    if (await listRepository.loadCachedParameters()) {
+  makeAutomaticLogim(context) async {
+    try {
+      await Future.delayed(const Duration(seconds: 1));
       await makeLogin();
-    } else {
+      print("passou aqui ");
+      if (await hasAlreadyASheetSaved()) {
+        await Navigator.popAndPushNamed(
+          NavigationService.getNavigator().currentContext!,
+          '/list-page',
+        );
+      } else {
+        await Navigator.popAndPushNamed(
+          NavigationService.getNavigator().currentContext!,
+          '/create_or_get_sheet_id',
+        );
+      }
+    } catch (e) {
+      print("passou aqui2 ");
+    } finally {
+      print("passou aqui 33 ");
       loginPageState = LoginPageState.success;
     }
   }
 
   Future<void> makeLogout() => _googleSignIn.disconnect();
+
+  Future<bool> hasAlreadyASheetSaved() async =>
+      await listRepository.loadCachedParameters();
 }
