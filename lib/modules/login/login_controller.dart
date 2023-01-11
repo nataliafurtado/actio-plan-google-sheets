@@ -75,27 +75,20 @@ abstract class LoginControllerBase with Store {
   }
 
   makeAutomaticLogim(context) async {
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      await makeLogin();
-      print("passou aqui ");
-      if (await hasAlreadyASheetSaved()) {
-        await Navigator.popAndPushNamed(
-          NavigationService.getNavigator().currentContext!,
-          '/list-page',
-        );
-      } else {
-        await Navigator.popAndPushNamed(
-          NavigationService.getNavigator().currentContext!,
-          '/create_or_get_sheet_id',
-        );
-      }
-    } catch (e) {
-      print("passou aqui2 ");
-    } finally {
-      print("passou aqui 33 ");
-      loginPageState = LoginPageState.success;
+    await Future.delayed(const Duration(seconds: 1));
+    await makeLogin();
+    if (await hasAlreadyASheetSaved()) {
+      Navigator.popAndPushNamed(
+        NavigationService.getNavigator().currentContext!,
+        '/list-page',
+      );
+    } else {
+      Navigator.popAndPushNamed(
+        NavigationService.getNavigator().currentContext!,
+        '/create_or_get_sheet_id',
+      );
     }
+    loginPageState = LoginPageState.success;
   }
 
   Future<void> makeLogout() => _googleSignIn.disconnect();

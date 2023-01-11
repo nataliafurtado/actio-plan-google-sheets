@@ -58,9 +58,12 @@ class CreateOrGetSheetId extends StatelessWidget {
                   'Ir para planilha',
                   () async {
                     await GetIt.I.get<ListRepository>().loadOldSheetData(
-                          controllerScript.text,
-                          controllerDeploy.text,
-                          controllersheetId.text,
+                          // controllerScript.text,
+                          // controllerDeploy.text,
+                          // controllersheetId.text,
+                          '1gPTh3G3AYtpJ_CAaowBJe2es1mpu8MPYWrD-2QOSqiwJclxXiTRapvhe',
+                          'AKfycbweRe_Tb4Xx6tT8s2-qjcR4piVpujM6hLWIpMzcFvvdz7uc9pAK0CZqyXRzGtW0fpeJ',
+                          '1nTLdynCJJkRCKOmHK8Sw3jbGLD7y3zVU3C67L5Eg8Fc',
                         );
                     await Navigator.popAndPushNamed(
                       NavigationService.getNavigator().currentContext!,

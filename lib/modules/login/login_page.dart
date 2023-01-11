@@ -23,9 +23,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     controller = GetIt.I.get<LoginController>();
-    // WidgetsBinding.instance!.addPostFrameCallback((_) {
-    //   controller.makeAutomaticLogim(context);
-    // });
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      controller.makeAutomaticLogim(context);
+    });
     super.initState();
   }
 
