@@ -61,7 +61,7 @@ class ListRepository {
       var response = await dio.post(
         'https://script.googleapis.com/v1/projects',
         data: {
-          "title": "TestNat111",
+          "title": "TestNat112",
         },
       );
 
@@ -184,7 +184,7 @@ class ListRepository {
   separetaResponsableValues(List<ActionEvent> list) {
     List<String> responsablesList = [];
     for (var i = 0; i < list.length; i++) {
-      responsablesList.add(list[i].quem!);
+      responsablesList.add(list[i].quem!.trim());
     }
     responsablesList = responsablesList.toSet().toList();
     // if (!responsablesList.contains("")) {

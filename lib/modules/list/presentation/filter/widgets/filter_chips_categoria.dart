@@ -5,14 +5,14 @@ import 'package:google_action_plan/modules/list/list_controller.dart';
 
 import 'package:google_action_plan/modules/widgets/chips_filter.dart';
 
-class FilterChipsStatus extends StatefulWidget {
-  const FilterChipsStatus({Key? key}) : super(key: key);
+class FilterChipsCategoria extends StatefulWidget {
+  const FilterChipsCategoria({Key? key}) : super(key: key);
 
   @override
-  _FilterChipsStatusState createState() => _FilterChipsStatusState();
+  _FilterChipsCategoriaState createState() => _FilterChipsCategoriaState();
 }
 
-class _FilterChipsStatusState extends State<FilterChipsStatus> {
+class _FilterChipsCategoriaState extends State<FilterChipsCategoria> {
   late ListController controllerList;
   @override
   Widget build(BuildContext context) {
@@ -20,17 +20,20 @@ class _FilterChipsStatusState extends State<FilterChipsStatus> {
 
     return Observer(
       builder: (_) {
-        String status = controllerList.selectedFilterStatus;
+        String t = controllerList.categoria;
+        if (t.length > 10) {
+          t = t.substring(1, 10);
+        }
         return ChipsFilter(
-          textDefault: status,
+          textDefault: t,
           width: 150,
-          onClick: _statusFilter,
+          onClick: _filter,
         );
       },
     );
   }
 
-  void _statusFilter(
+  void _filter(
     context,
   ) {
     showModalBottomSheet(
@@ -42,25 +45,27 @@ class _FilterChipsStatusState extends State<FilterChipsStatus> {
             SizedBox(
               height: 400,
               child: ListView.builder(
-                itemCount: controllerList.status.length + 1,
+                itemCount: controllerList.categorias.length + 1,
                 itemBuilder: (ctx, index) {
-                  return index == controllerList.status.length
+                  return index == controllerList.categorias.length
                       ? ListTile(
                           leading: const Icon(Icons.not_interested),
                           title: const Text('Todas'),
                           onTap: () {
                             Navigator.pop(context);
-                            controllerList.filterStatusCleanFilter();
+                            controllerList.filterCategoriaCleanFilter();
                           },
                         )
                       : ListTile(
-                          leading: const Icon(Icons.label_important),
-                          title:
-                              Text(controllerList.status[index].toUpperCase()),
+                          leading: const Icon(Icons.person),
+                          title: Text(
+                            controllerList.categorias[index].toUpperCase(),
+                          ),
                           onTap: () {
                             Navigator.pop(context);
-                            controllerList.filterStatusActions(
-                                controllerList.status[index]);
+                            controllerList.filterCategoriaActions(
+                              controllerList.categorias[index],
+                            );
                           },
                         );
                 },

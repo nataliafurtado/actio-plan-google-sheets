@@ -42,10 +42,8 @@ class _DatePickerPrazoState extends State<DatePickerPrazo> {
   _selectDate(BuildContext context, ActionController controller) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: controller.prazo.isEmpty
-          ? DateTime.now()
-          : DateTime.parse(controller.prazo),
-      firstDate: DateTime.now().add(const Duration(days: -10)),
+      initialDate: calculateaDateTime(controller),
+      firstDate: firtsDate,
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null) {
@@ -54,4 +52,15 @@ class _DatePickerPrazoState extends State<DatePickerPrazo> {
       });
     }
   }
+
+  DateTime calculateaDateTime(ActionController controller) {
+    if (controller.prazo.isEmpty ||
+        DateTime.parse(controller.prazo).isBefore(firtsDate)) {
+      return DateTime.now();
+    }
+
+    return DateTime.parse(controller.prazo);
+  }
+
+  DateTime get firtsDate => DateTime.now().add(const Duration(days: -10));
 }

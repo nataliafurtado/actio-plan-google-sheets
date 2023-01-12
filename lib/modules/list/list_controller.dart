@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_action_plan/infrastructure/repositories_impl/list_repository.dart';
+import 'package:google_action_plan/modules/list/presentation/filter/filter_categoria.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/filter_responsable.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/filter_status.dart';
 import 'package:mobx/mobx.dart';
@@ -31,7 +32,14 @@ abstract class ListControllerBase with Store {
   @observable
   List<String> responsables = [];
 
+  @observable
   String selectedResponsable = '';
+
+  @observable
+  String categoria = '';
+
+  @observable
+  List<String> categorias = [];
 
   List<String> status = [
     'EM PROGRESSO',
@@ -63,9 +71,11 @@ abstract class ListControllerBase with Store {
     listPageState = ListPageState.loading;
     selectedFilterStatus = "STATUS";
     selectedResponsable = "QUEM";
+    categoria = "CATEGORIA";
     List<ActionEvent> actionList = await listRepository.loadRows();
     actionsNotFiltered = actionList;
     responsables = listRepository.getResResponsablesList();
+    categorias = listRepository.getCategories();
     actions = actionList;
     // apllySavedFIlters(actionList);
     listPageState = ListPageState.success;
@@ -94,7 +104,20 @@ abstract class ListControllerBase with Store {
   // FILTERS
   @action
   filter() {
-    if (isFilterStatusAndFilterResponsableSelected()) {
+    if (isFilterStatusAndCategoriaAndResponsable()) {
+      List<ActionEvent> actionList = [];
+      actionList = FilterStatus.fiter(actionsNotFiltered, selectedFilterStatus);
+      actionList = FilterCategoria.fiter(actionList, categoria);
+      actions = FilterResponsable.fiter(actionList, selectedResponsable);
+    } else if (isFilterStatusAndCategoria()) {
+      List<ActionEvent> actionList = [];
+      actionList = FilterStatus.fiter(actionsNotFiltered, selectedFilterStatus);
+      actions = FilterCategoria.fiter(actionList, categoria);
+    } else if (isFilterResponsableAndCategoriaSelected()) {
+      List<ActionEvent> actionList = [];
+      actionList = FilterCategoria.fiter(actionsNotFiltered, categoria);
+      actions = FilterResponsable.fiter(actionList, selectedResponsable);
+    } else if (isFilterStatusAndFilterResponsableSelected()) {
       List<ActionEvent> actionList = [];
       actionList = FilterStatus.fiter(actionsNotFiltered, selectedFilterStatus);
       actions = FilterResponsable.fiter(actionList, selectedResponsable);
@@ -103,15 +126,30 @@ abstract class ListControllerBase with Store {
     } else if (isFilterResponsableSelected()) {
       actions =
           FilterResponsable.fiter(actionsNotFiltered, selectedResponsable);
+    } else if (isFilterCategoriaSelected()) {
+      actions = FilterCategoria.fiter(actionsNotFiltered, categoria);
     } else {
       actions = actionsNotFiltered;
     }
   }
 
+  bool isFilterStatusAndCategoriaAndResponsable() =>
+      selectedFilterStatus != "STATUS" &&
+      selectedResponsable != "QUEM" &&
+      categoria != "CATEGORIA";
+
+  bool isFilterStatusAndCategoria() =>
+      selectedFilterStatus != "STATUS" && categoria != "CATEGORIA";
+
+  bool isFilterResponsableAndCategoriaSelected() =>
+      selectedResponsable != "QUEM" && categoria != "CATEGORIA";
+
   bool isFilterStatusAndFilterResponsableSelected() =>
       selectedFilterStatus != "STATUS" && selectedResponsable != "QUEM";
+
   bool isFilterStatusSelected() => selectedFilterStatus != "STATUS";
   bool isFilterResponsableSelected() => selectedResponsable != "QUEM";
+  bool isFilterCategoriaSelected() => categoria != "CATEGORIA";
 
   @action
   filterStatusActions(String statusPassed) {
@@ -128,6 +166,13 @@ abstract class ListControllerBase with Store {
   }
 
   @action
+  filterCategoriaActions(String categoriaPassed) {
+    // saveFilter(responsablePassed, Constants.filtroResponsable);
+    categoria = categoriaPassed.toUpperCase();
+    filter();
+  }
+
+  @action
   filterStatusCleanFilter() {
     // deleteFilter(Constants.filtroStatus);
     selectedFilterStatus = "STATUS";
@@ -138,6 +183,13 @@ abstract class ListControllerBase with Store {
   filterResponsableCleanFilter() {
     // deleteFilter(Constants.filtroResponsable);
     selectedResponsable = "QUEM";
+    filter();
+  }
+
+  @action
+  filterCategoriaCleanFilter() {
+    // deleteFilter(Constants.filtroResponsable);
+    categoria = "CATEGORIA";
     filter();
   }
 

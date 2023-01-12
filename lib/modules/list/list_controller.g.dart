@@ -54,6 +54,52 @@ mixin _$ListController on ListControllerBase, Store {
     });
   }
 
+  final _$selectedResponsableAtom =
+      Atom(name: 'ListControllerBase.selectedResponsable');
+
+  @override
+  String get selectedResponsable {
+    _$selectedResponsableAtom.reportRead();
+    return super.selectedResponsable;
+  }
+
+  @override
+  set selectedResponsable(String value) {
+    _$selectedResponsableAtom.reportWrite(value, super.selectedResponsable, () {
+      super.selectedResponsable = value;
+    });
+  }
+
+  final _$categoriaAtom = Atom(name: 'ListControllerBase.categoria');
+
+  @override
+  String get categoria {
+    _$categoriaAtom.reportRead();
+    return super.categoria;
+  }
+
+  @override
+  set categoria(String value) {
+    _$categoriaAtom.reportWrite(value, super.categoria, () {
+      super.categoria = value;
+    });
+  }
+
+  final _$categoriasAtom = Atom(name: 'ListControllerBase.categorias');
+
+  @override
+  List<String> get categorias {
+    _$categoriasAtom.reportRead();
+    return super.categorias;
+  }
+
+  @override
+  set categorias(List<String> value) {
+    _$categoriasAtom.reportWrite(value, super.categorias, () {
+      super.categorias = value;
+    });
+  }
+
   final _$isToShowResponsableAtom =
       Atom(name: 'ListControllerBase.isToShowResponsable');
 
@@ -140,6 +186,17 @@ mixin _$ListController on ListControllerBase, Store {
   }
 
   @override
+  dynamic filterCategoriaActions(String categoriaPassed) {
+    final _$actionInfo = _$ListControllerBaseActionController.startAction(
+        name: 'ListControllerBase.filterCategoriaActions');
+    try {
+      return super.filterCategoriaActions(categoriaPassed);
+    } finally {
+      _$ListControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic filterStatusCleanFilter() {
     final _$actionInfo = _$ListControllerBaseActionController.startAction(
         name: 'ListControllerBase.filterStatusCleanFilter');
@@ -162,6 +219,17 @@ mixin _$ListController on ListControllerBase, Store {
   }
 
   @override
+  dynamic filterCategoriaCleanFilter() {
+    final _$actionInfo = _$ListControllerBaseActionController.startAction(
+        name: 'ListControllerBase.filterCategoriaCleanFilter');
+    try {
+      return super.filterCategoriaCleanFilter();
+    } finally {
+      _$ListControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic changeShowResponsableInCard() {
     final _$actionInfo = _$ListControllerBaseActionController.startAction(
         name: 'ListControllerBase.changeShowResponsableInCard');
@@ -178,6 +246,9 @@ mixin _$ListController on ListControllerBase, Store {
 actions: ${actions},
 listPageState: ${listPageState},
 responsables: ${responsables},
+selectedResponsable: ${selectedResponsable},
+categoria: ${categoria},
+categorias: ${categorias},
 isToShowResponsable: ${isToShowResponsable},
 selectedFilterStatus: ${selectedFilterStatus}
     ''';

@@ -19,6 +19,7 @@ Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
           : User.fromJson(json['lastModifyUser'] as Map<String, dynamic>),
       deploimentId: json['deploimentId'] as String?,
     )
+      ..sheetId = json['sheetId'] as String?
       ..title = json['title'] as String?
       ..updateTime = json['updateTime'] as String?;
 
@@ -33,6 +34,7 @@ Map<String, dynamic> _$ProjectToJson(Project instance) {
 
   writeNotNull('scriptId', instance.scriptId);
   writeNotNull('deploimentId', instance.deploimentId);
+  writeNotNull('sheetId', instance.sheetId);
   writeNotNull('title', instance.title);
   writeNotNull('updateTime', instance.updateTime);
   writeNotNull('files', instance.files);

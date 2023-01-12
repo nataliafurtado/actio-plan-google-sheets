@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_action_plan/modules/list/presentation/filter/widgets/filter_chips_categoria.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/widgets/filter_chips_responsable.dart';
 import 'package:google_action_plan/modules/list/presentation/filter/widgets/log_out.dart';
 
@@ -30,8 +31,10 @@ class _FiltersState extends State<Filters> {
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
                   const FilterChipsStatus(),
-                  Container(width: 16),
+                  Container(width: 8),
                   const FilterChipsResponsable(),
+                  Container(width: 8),
+                  const FilterChipsCategoria(),
                   Container(width: 8),
                 ],
               ),

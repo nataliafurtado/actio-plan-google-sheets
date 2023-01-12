@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_action_plan/modules/list/list_controller.dart';
 import 'package:google_action_plan/modules/widgets/chips_filter.dart';
@@ -15,14 +16,19 @@ class _FilterChipsResponsableState extends State<FilterChipsResponsable> {
   @override
   Widget build(BuildContext context) {
     controllerList = GetIt.I.get<ListController>();
-    return ChipsFilter(
-      textDefault: controllerList.selectedResponsable,
-      width: 150,
-      onClick: _statusFilter,
+    return Observer(
+      builder: (_) {
+        String responsable = controllerList.selectedResponsable;
+        return ChipsFilter(
+          textDefault: responsable,
+          width: 150,
+          onClick: _filter,
+        );
+      },
     );
   }
 
-  void _statusFilter(
+  void _filter(
     context,
   ) {
     showModalBottomSheet(
